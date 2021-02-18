@@ -10,6 +10,8 @@ namespace SharpProject
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Клашкин Михаил Сергеевич\nМ20-502");
+            Console.ReadKey();
         }
     }
 }
