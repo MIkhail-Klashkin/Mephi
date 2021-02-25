@@ -1,0 +1,96 @@
+USE master
+GO
+CREATE DATABASE ConstructionCompanyDB
+GO
+USE ConstructionCompanyDB
+GO
+
+CREATE TABLE ConstructionSites(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+);
+
+CREATE TABLE Providers(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+ProviderName VARCHAR (60) NOT NULL,
+);
+
+CREATE TABLE Tracks(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+);
+
+CREATE TABLE Storages(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+);
+
+CREATE TABLE MaterialTypes(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+MaterialName VARCHAR (60) NOT NULL,
+);
+
+CREATE TABLE Employees(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+FIO VARCHAR (60) NOT NULL,
+Salary	DECIMAL NOT NULL
+);
+
+CREATE TABLE Builders(
+Employee_Id INT NOT NULL,
+ConstructionSite_Id INT NOT NULL,
+WorkTime INT,
+CONSTRAINT Builder_E FOREIGN KEY (Employee_Id) REFERENCES Employees(Id),
+CONSTRAINT Builder_C FOREIGN KEY (ConstructionSite_Id) REFERENCES ConstructionSites(Id)
+);
+
+CREATE TABLE Managers(
+Employee_Id INT NOT NULL,
+ConstructionSite_Id INT NOT NULL UNIQUE,
+CONSTRAINT Manager_E FOREIGN KEY (Employee_Id) REFERENCES Employees(Id),
+CONSTRAINT Manager_C FOREIGN KEY (ConstructionSite_Id) REFERENCES ConstructionSites(Id)
+);
+
+CREATE TABLE Drivers(
+Employee_Id INT NOT NULL,
+Track_Id INT NOT NULL UNIQUE,
+CONSTRAINT Driver_E FOREIGN KEY (Employee_Id) REFERENCES Employees(Id),
+CONSTRAINT Driver_T FOREIGN KEY (Track_Id) REFERENCES Tracks(Id)
+);
+
+CREATE TABLE Accountant(
+Employee_Id INT NOT NULL,
+Wage INT,
+CONSTRAINT Accountant_E FOREIGN KEY (Employee_Id) REFERENCES Employees(Id)
+);
+
+CREATE TABLE Provider_MaterialType(
+Provider_Id INT NOT NULL,
+MaterialType_Id INT NOT NULL,
+Price DECIMAL NOT NULL,
+CONSTRAINT Provider_MaterialType_P FOREIGN KEY (Provider_Id) REFERENCES Providers(Id),
+CONSTRAINT Provider_MaterialType_T FOREIGN KEY (MaterialType_Id) REFERENCES MaterialTypes(Id),
+);
+
+CREATE TABLE Materials(
+Provider_Id INT NOT NULL,
+MaterialType_Id INT NOT NULL,
+Storage_Id INT NOT NULL,
+Amount DECIMAL NOT NULL,
+CONSTRAINT Material_P FOREIGN KEY (Provider_Id) REFERENCES Providers(Id),
+CONSTRAINT Material_T FOREIGN KEY (MaterialType_Id) REFERENCES MaterialTypes(Id),
+CONSTRAINT Material_S FOREIGN KEY (Storage_Id) REFERENCES Storages(Id)
+);
+CREATE TABLE Deliveries(
+Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+Track_Id INT NOT NULL,
+ConstructionSite_Id INT NOT NULL,
+CONSTRAINT Delivery_T FOREIGN KEY (Track_Id) REFERENCES Tracks(Id),
+CONSTRAINT Delivery_C FOREIGN KEY (ConstructionSite_Id) REFERENCES ConstructionSites(Id)
+);
+CREATE TABLE Delivery_Material(
+Storage_Id INT NOT NULL,
+MaterialType_Id INT NOT NULL,
+Delivery_Id INT NOT NULL,
+Amount DECIMAL NOT NULL,
+CONSTRAINT Delivery_Material_S FOREIGN KEY (Storage_Id) REFERENCES Storages(Id),
+CONSTRAINT Delivery_Material_T FOREIGN KEY (MaterialType_Id) REFERENCES MaterialTypes(Id),
+CONSTRAINT Delivery_Material_D FOREIGN KEY (Delivery_Id) REFERENCES Deliveries(Id)
+);
